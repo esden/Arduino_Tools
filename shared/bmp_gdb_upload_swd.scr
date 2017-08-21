@@ -1,0 +1,12 @@
+set confirm off
+monitor version
+# Enable target power supply
+#monitor tpwr enable
+# Enable reset line toggle before connecting to the target
+monitor connect_srst enable
+monitor swdp_scan
+attach 1
+load
+compare-sections
+kill
+echo \nYEY! Upload succeeded!\n

@@ -5,7 +5,15 @@ set driverLetter=%~dp0
 set driverLetter=%driverLetter:~0,2%
 %driverLetter%
 cd %~dp0
-rem: the two line below are needed to fix path issues with incorrect slashes before the bin file name
-set str=%4
-set str=%str:/=\%
-%1arm-none-eabi-gdb.exe -b %2  -ex "set debug remote 0" -ex "set target-async off" -ex "set remotetimeout 60" -ex "set confirm off" -ex "set height 0" -ex %3 -ex "monitor swdp_scan" -ex "attach 1" -ex "x/wx 0x8000004" -ex "monitor erase_mass" -ex "echo 0x8000004 expect 0xffffffff after erase\n" -ex "x/wx 0x8000004" -ex "file %str%" -ex "load" -ex "x/i *0x8000004" -ex "kill" -ex "tbreak main" -ex "run" -ex "detach" -ex "echo \n\n\n%6 uploaded!\n" -ex "quit" 
+rem: get all parameters that we will be using and make sure the slashes are all correct
+set working_directory=%~p0
+set toolchain_path=%~1
+set toolchain_path=%toolchain_path:/=\%
+set bmp_gdb_port=%2
+set bmp_gdb_port=%bmp_gdb_port:/=\%
+set elf_file=%3
+set elf_file=%elf_file:/=\%
+%toolchain_path%arm-none-eabi-gdb.exe --batch -nx ^
+	-ex "target extended-remote %bmp_gdb_port%" ^
+	-x %working_directory%..\shared\bmp_gdb_upload_swd.scr ^
+	%elf_file%

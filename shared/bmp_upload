@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -lt 3 ]; then
+    echo "Usage: $0 $# <bmp_gdb_port> <elf_file>" >&2
+    exit 1
+fi
+toolchain_path=$1; bmp_gdb_port=/dev/$2; elf_file=$3
+
+# Get the directory where the script is running.
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+# Check if the serial device exists
+if [ ! -c ${bmp_gdb_port} ]; then
+	echo "$0: error: cannot find ${bmp_gdb_port}"
+	exit 2
+fi
+
+# Setup environment
+PATH=${toolchain_path}:$PATH
+
+# Execute gdb flash script
+arm-none-eabi-gdb --batch -nx \
+	-ex "target extended-remote ${bmp_gdb_port}" \
+	-x ${DIR}/bmp_gdb_upload_swd.scr ${elf_file}
