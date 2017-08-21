@@ -1,4 +1,4 @@
-rem: @echo off
+@echo off
 rem: Note %~dp0 get path of this batch file
 rem: Need to change drive if My Documents is on a drive other than C:
 set driverLetter=%~dp0
@@ -13,7 +13,7 @@ set bmp_gdb_port=%2
 set bmp_gdb_port=%bmp_gdb_port:/=\%
 set elf_file=%3
 set elf_file=%elf_file:/=\%
-%toolchain_path%arm-none-eabi-gdb.exe --batch -nx ^
+%toolchain_path%\arm-none-eabi-gdb.exe --batch -nx ^
 	-ex "target extended-remote %bmp_gdb_port%" ^
 	-x %working_directory%..\shared\bmp_gdb_upload_swd.scr ^
 	%elf_file%
